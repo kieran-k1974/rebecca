@@ -131,7 +131,9 @@
             data.payments.slice(1).forEach(payment => {
                 const entry = document.createElement('div');
                 entry.className = 'payment-entry';
-                entry.innerHTML = `<span>${payment[0]}</span>: €${parseFloat(payment[1]).toFixed(2)}`;
+                // Format the date to day/month/year format (e.g., 12/11/2024)
+                const formattedDate = new Date(payment[0]).toLocaleDateString('en-GB');
+                entry.innerHTML = `<span>${formattedDate}</span>: €${parseFloat(payment[1]).toFixed(2)}`;
                 paymentList.appendChild(entry);
             });
         } catch (error) {
