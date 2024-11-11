@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Tracker</title>
     <style>
-        /* Styles same as previous modernized version */
-        /* Add all your CSS styles from the previous modernized version here */
+        /* Include the CSS styles from the previous modernized version */
     </style>
 </head>
 <body>
@@ -27,47 +26,28 @@
     <div id="payment-list"></div>
 </div>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
 <script>
-    // Firebase configuration (replace with your own)
-const firebaseConfig = {
-  apiKey: "AIzaSyAeMjzf1-jjrOA1gOhWfIKGhKkrHZr66iE",
-  authDomain: "rebecca-loan.firebaseapp.com",
-  projectId: "rebecca-loan",
-  storageBucket: "rebecca-loan.firebasestorage.app",
-  messagingSenderId: "573775873253",
-  appId: "1:573775873253:web:1370cea95b3c65c7b8400c",
-  measurementId: "G-VKSGFW3L23"
-};
+    const apiUrl = 'https://docs.google.com/spreadsheets/d/1RT4RlnmolCCiCd3feJNDybjjn77lark843chJJxSv5c/edit?usp=sharing';
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore(app);
+    async function loadData() {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
 
-    // Initial Loan Amount
-    const initialLoanAmount = 1000;
-    let remainingBalance = initialLoanAmount;
+            // Display balance
+            document.getElementById('remaining-balance').textContent = data.balance.toFixed(2);
 
-    async function loadPayments() {
-        // Get the payment data from Firestore
-        const paymentsRef = db.collection("payments");
-        const doc = await paymentsRef.doc("loanData").get();
-
-        if (doc.exists) {
-            const data = doc.data();
-            remainingBalance = data.remainingBalance;
-            document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
-            displayPayments(data.payments);
-        } else {
-            // Initialize Firestore document if it doesn't exist
-            await paymentsRef.doc("loanData").set({
-                remainingBalance: initialLoanAmount,
-                payments: []
+            // Display payment history
+            const paymentList = document.getElementById('payment-list');
+            paymentList.innerHTML = '';
+            data.payments.slice(1).forEach(payment => {
+                const entry = document.createElement('div');
+                entry.className = 'payment-entry';
+                entry.innerHTML = `<span>${payment[0]}</span><span>€${parseFloat(payment[1]).toFixed(2)}</span>`;
+                paymentList.appendChild(entry);
             });
-            document.getElementById('remaining-balance').textContent = initialLoanAmount.toFixed(2);
+        } catch (error) {
+            console.error('Error loading data:', error);
         }
     }
 
@@ -80,43 +60,25 @@ const firebaseConfig = {
             return;
         }
 
-        // Update remaining balance
-        remainingBalance -= amount;
-
-        // Update Firestore with new payment
-        const paymentsRef = db.collection("payments").doc("loanData");
-        const doc = await paymentsRef.get();
-        const data = doc.data();
-        const newPayments = [...data.payments, { amount, date }];
-
-        await paymentsRef.update({
-            remainingBalance,
-            payments: newPayments
-        });
-
-        // Update display
-        document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
-        displayPayments(newPayments);
+        try {
+            const response = await fetch(`${apiUrl}?amount=${amount}&date=${date}`, { method: 'POST' });
+            if (response.ok) {
+                alert('Payment added successfully');
+                loadData();
+            } else {
+                alert('Failed to add payment');
+            }
+        } catch (error) {
+            console.error('Error adding payment:', error);
+        }
 
         // Clear input fields
         document.getElementById('payment-amount').value = '';
         document.getElementById('payment-date').value = '';
     }
 
-    function displayPayments(payments) {
-        const paymentList = document.getElementById('payment-list');
-        paymentList.innerHTML = '';
-
-        payments.forEach(payment => {
-            const entry = document.createElement('div');
-            entry.className = 'payment-entry';
-            entry.innerHTML = `<span>${payment.date}</span><span>€${payment.amount.toFixed(2)}</span>`;
-            paymentList.appendChild(entry);
-        });
-    }
-
-    // Load payments on page load
-    loadPayments();
+    // Load data on page load
+    loadData();
 </script>
 
 </body>
