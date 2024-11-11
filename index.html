@@ -1,138 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Tracker</title>
-    <style>
-        /* General Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f7f8fc;
-            color: #333;
-        }
-
-        h1 {
-            font-size: 1.8em;
-            color: #4a90e2;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 400px;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        input[type="number"],
-        input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            background-color: #f1f1f1;
-            transition: background 0.3s;
-        }
-
-        input:focus {
-            background-color: #ffffff;
-            outline: none;
-            border-color: #4a90e2;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            font-size: 1em;
-            color: #fff;
-            background-color: #4a90e2;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #357abd;
-        }
-
-        h2 {
-            margin-top: 20px;
-            font-size: 1.4em;
-            color: #333;
-            text-align: center;
-        }
-
-        #payment-list {
-            margin-top: 20px;
-        }
-
-        .payment-entry {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9em;
-            color: #444;
-        }
-
-        .payment-entry span {
-            font-weight: normal;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>Loan Tracker</h1>
-
-    <label for="payment-amount">Payment Amount (€):</label>
-    <input type="number" id="payment-amount" placeholder="Enter amount" required>
-
-    <label for="payment-date">Payment Date:</label>
-    <input type="date" id="payment-date" required>
-
-    <button onclick="addPayment()">Add Payment</button>
-
-    <h2>Remaining Balance: €<span id="remaining-balance">1000</span></h2>
-
-    <div id="payment-list"></div>
-</div>
-
 <script>
     const initialLoanAmount = 1000;
-    let remainingBalance = initialLoanAmount;
 
-    // Load payments from local storage
+    // Load payments and remaining balance from local storage
     const payments = JSON.parse(localStorage.getItem('payments')) || [];
+    let remainingBalance = parseFloat(localStorage.getItem('remainingBalance')) || initialLoanAmount;
 
     // Display initial data
-    document.getElementById('remaining-balance').textContent = remainingBalance - calculateTotalPayments();
+    document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
     displayPayments();
 
     function addPayment() {
@@ -150,6 +24,7 @@
 
         // Save to local storage
         localStorage.setItem('payments', JSON.stringify(payments));
+        localStorage.setItem('remainingBalance', remainingBalance);
 
         // Update display
         document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
@@ -171,11 +46,4 @@
             paymentList.appendChild(entry);
         });
     }
-
-    function calculateTotalPayments() {
-        return payments.reduce((total, payment) => total + payment.amount, 0);
-    }
 </script>
-
-</body>
-</html>
