@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        label, input, button {
+            margin: 5px;
+        }
+        #payment-list {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .payment-entry {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Loan Tracker</h1>
+
+<label for="payment-amount">Payment Amount (€):</label>
+<input type="number" id="payment-amount" placeholder="Enter amount" required>
+<br>
+<label for="payment-date">Payment Date:</label>
+<input type="date" id="payment-date" required>
+<br>
+<button onclick="addPayment()">Add Payment</button>
+
+<h2>Remaining Balance: €<span id="remaining-balance">1000</span></h2>
+
+<div id="payment-list"></div>
+
+<script>
+    const initialLoanAmount = 1000;
+    let remainingBalance = initialLoanAmount;
+
+    // Load payments from local storage
+    const payments = JSON.parse(localStorage.getItem('payments')) || [];
+
+    // Display initial data
+    document.getElementById('remaining-balance').textContent = remainingBalance - calculateTotalPayments();
+    displayPayments();
+
+    function addPayment() {
+        const amount = parseFloat(document.getElementById('payment-amount').value);
+        const date = document.getElementById('payment-date').value;
+
+        if (!amount || !date) {
+            alert('Please enter a valid amount and date.');
+            return;
+        }
+
+        // Update payments and remaining balance
+        payments.push({ amount, date });
+        remainingBalance -= amount;
+
+        // Save to local storage
+        localStorage.setItem('payments', JSON.stringify(payments));
+
+        // Update display
+        document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
+        displayPayments();
+
+        // Clear input fields
+        document.getElementById('payment-amount').value = '';
+        document.getElementById('payment-date').value = '';
+    }
+
+    function displayPayments() {
+        const paymentList = document.getElementById('payment-list');
+        paymentList.innerHTML = '';
+
+        payments.forEach(payment => {
+            const entry = document.createElement('div');
+            entry.className = 'payment-entry';
+            entry.innerHTML = `<span>${payment.date}</span><span>€${payment.amount.toFixed(2)}</span>`;
+            paymentList.appendChild(entry);
+        });
+    }
+
+    function calculateTotalPayments() {
+        return payments.reduce((total, payment) => total + payment.amount, 0);
+    }
+</script>
+
+</body>
+</html>
