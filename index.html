@@ -117,7 +117,7 @@
 </div>
 
 <script>
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbw9z1TtkpkdIXtAhJF3SSHj0RlQCFY6qmXOGR0hOrzmxWHSgBc-Pmb0_wOIkq7ycwY3/exec'; 
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbzY4-g2QZ7HuOgFRBw2v4Hmc-0GbwVfga9NCkwVPDM/dev'; 
 
     async function loadData() {
         try {
@@ -131,9 +131,12 @@
             data.payments.slice(1).forEach(payment => {
                 const entry = document.createElement('div');
                 entry.className = 'payment-entry';
+
                 // Format the date to day/month/year format (e.g., 12/11/2024)
-                const formattedDate = new Date(payment[0]).toLocaleDateString('en-GB');
-                entry.innerHTML = `<span>${formattedDate}</span>: €${parseFloat(payment[1]).toFixed(2)}`;
+                const formattedDate = new Date(payment[0]);
+                const formattedDateStr = formattedDate.getDate().toString().padStart(2, '0') + '/' + (formattedDate.getMonth() + 1).toString().padStart(2, '0') + '/' + formattedDate.getFullYear();
+
+                entry.innerHTML = `<span>${formattedDateStr}</span>: €${parseFloat(payment[1]).toFixed(2)}`;
                 paymentList.appendChild(entry);
             });
         } catch (error) {
