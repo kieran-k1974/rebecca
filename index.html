@@ -156,7 +156,7 @@
             Loan Payment Tracker
         </div>
         <div class="card-body">
-            <h5 class="card-title"><i class="fa-solid fa-wallet balance-icon"></i>Remaining Balance: <span id="remaining-balance">5000.00</span> €</h5>
+            <h5 class="card-title"><i class="fa-solid fa-wallet balance-icon"></i>Remaining Balance: <span id="remaining-balance-euro"><i class="fa-solid fa-euro-sign" style="color:#28a745;"></i><span id="remaining-balance">5000.00</span></span></h5>
             <form id="payment-form">
                 <div class="mb-3">
                     <label for="payment-amount" class="form-label"><i class="fa-solid fa-euro-sign"></i> Payment Amount (€):</label>
@@ -195,7 +195,7 @@
                 const formattedDate = new Date(payment[0]);
                 const formattedDateStr = formattedDate.getDate().toString().padStart(2, '0') + '/' + (formattedDate.getMonth() + 1).toString().padStart(2, '0') + '/' + formattedDate.getFullYear();
 
-                entry.innerHTML = `<i class='fa-solid fa-calendar'></i> <span>${formattedDateStr}</span> <i class='fa-solid fa-euro-sign'></i> <span>€${parseFloat(payment[1]).toFixed(2)}</span>`;
+                entry.innerHTML = `<i class='fa-solid fa-calendar'></i> <span>${formattedDateStr}</span> <span style='color:#28a745; margin-left:8px;'><i class='fa-solid fa-euro-sign'></i> ${parseFloat(payment[1]).toFixed(2)}</span>`;
                 paymentList.appendChild(entry);
             });
         } catch (error) {
