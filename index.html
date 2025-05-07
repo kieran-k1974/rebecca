@@ -187,7 +187,7 @@
             // Display payment history
             const paymentList = document.getElementById('payment-list');
             paymentList.innerHTML = '';
-            data.payments.slice(1).forEach(payment => {
+            data.payments.slice(1).reverse().forEach(payment => {
                 const entry = document.createElement('div');
                 entry.className = 'payment-entry';
 
